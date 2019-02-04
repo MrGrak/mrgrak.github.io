@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<title>MonoGame Getting Started Guide</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+<article>
+
+<h1>The Shadow King - Making Of</h1>
+
+<p>
+<h3>Version 0</h3>
+
+The first version of this zelda game was called 'The Cursed Castle'.<br>
+This game took place on 9 islands, each one of them randomly generated upon boot.<br>
+This was done because I got tired of designing islands, and got bored of exploring the same ones.<br>
+Development of this project did not complete, primarily due to a critical flaw introduced early on.<br>
+I made the design decision to make the default state of the hero the 'swimming state'.<br>
+I thought this was smart, since the hero would be swimming so much. This twisted the logic.<br>
+After many weeks of development, I ultimately abandoned The Cursed Castle for The Shadow King.<br>
+<br>
+
+<h3>Version 0.1</h3>
+
+The Shadow King took everything I learned from The Cursed Castle, and put it on land.<br>
+This development cycle, I focused on the most used systems first: movement, combat, animation.<br>
+The reasoning was: "If I can't get these fundamentals right, there is no reason to continue."<br>
+In other words, if combat felt clunky, there was no reason to design and make the inventory menu.<br>
+This caused me to focus alot on the basics of the game, and in turn provided a solid foundation.<br>
+Early on, it was decided that color would only be added if the game progressed to a worthy point.<br>
+<br>
+Version 0.1 of the game:
+<br><br>
+<img src="../Assets/TSK_001.gif">
+<br><br>
+At the core of v0.1 are the collision, particle, actor, projectile, animation and gameobj systems.<br>
+<br><br>
+
+<br><br>
+<h3>Version 0.2</h3>
+
+Version 0.2 introduced the most basic idea of a dungeon, a room that connects to a boss room.<br>
+This room was locked behind a boss door, which required a key.<br>
+<br>
+<img src="../Assets/TSK_002A.gif"><br>
+<br>
+Inside there was a boss actor, which would complete the dungeon upon death.<br>
+<br>
+<img src="../Assets/TSK_002B.gif"><br>
+<br>
+The inventory menu first appears here as well, which is going for a modern grid design in LttP style.<br>
+<br>
+<img src="../Assets/TSK_002C.gif"><br>
+<br><br>
+
+
+<br><br>
+<h3>Version 0.3</h3>
+
+Version 0.3 introduced an overworld style fast travel map. The inventory was expanded.<br>
+Additional items were added, along with moving dungeon objects, like spikeblocks.<br>
+<br><br>
+<img src="../Assets/TSK_003.gif"><br>
+<br><br>
+
+
+
+<br><br>
+<h3>Version 0.4</h3>
+
+Version 0.4 introduced Vendors and purchasing items and upgrades.<br>
+
+<br><br>
+<img src="../Assets/TSK_004A.gif"><br>
+<br><br>
+
+This version also begins to show how complicated the interactions were becoming:<br>
+<br><br>
+<img src="../Assets/TSK_004B.gif"><br>
+<br><br>
+Arrows, fireballs, conveyor belts, and a minor physics system all interact in the above animation.<br>
+At this point, all interactions were happening inside the collision system.<br>
+I wanted to add more items and objects, but doing so caused collision system logic to become very complex.<br>
+<br><br>
+
+
+
+
+<br><br>
+<h3>Version 0.5</h3>
+
+Version 0.5 introduced a Title Screen, and made the game feel like a real game.<br>
+
+<br><br>
+<img src="../Assets/TSK_005A.gif"><br>
+<br><br>
+
+This version also introduced a new room - the Exit Room:<br>
+<br><br>
+<img src="../Assets/TSK_005B.gif"><br>
+<br><br>
+At this point in development, 7 crystals were going to be used to represent completing the 7 dungeons.<br>
+There were also going to be stats like attack, defense, speed, health - like a JRPG.<br>
+<br><br>
+
+
+
+<br><br>
+<h3>Version 0.6</h3>
+
+Version 0.6 introduced a wide screen overworld SuperMarioBros style map.<br>
+This allowed the player to move between locations as the hero, which I felt played better.<br>
+This version also introduced procedurally generated dungeons using a critical path design.<br>
+<br><br>
+<img src="../Assets/TSK_006.gif"><br>
+<br><br>
+
+
+
+
+<br><br>
+<h3>Version 0.7</h3>
+
+Version 0.7 was where I decided that the project had reached a critical point.<br>
+It was now good enough to complete, and I was adding ideas that were new and interesting.<br>
+<br><br>
+<img src="../Assets/TSK_007A.gif"><br>
+<img src="../Assets/TSK_007B.gif"><br>
+<br><br>
+
+At this point, focus shifted to making new experiences in this 2d zelda format.<br>
+Based on research, the original creator of Zelda, Miyamoto talked about a few ideas that didn't make it into Lttp.<br>
+Taking those ideas and adding them into my game became the goal.<br>
+<br>
+Here we see fire spreading across grass and trees:<br>
+<br><br>
+<img src="../Assets/TSK_007C.gif"><br>
+<br><br>
+
+At this point, the interaction system was growing extremely complex, so much refactoring was done.<br>
+This refactoring affected many systems, was very time consuming, but laid the foundation for more ideas.<br>
+<br><br>
+
+
+
+
+<br><br>
+<h3>Version 0.72</h3>
+
+Version 0.72 introduced ditches, water, swimming, and water traveling through ditches, along with the shovel item.<br>
+Water traveling through ditches was a Miyamoto idea again - this time coming from a 1992 interview given to Famicon Tsuushin.<br>
+<br><br>
+<img src="../Assets/TSK_072.gif"><br>
+<br><br>
+
+
+
+
+<br><br>
+<h3>Version 0.73</h3>
+
+Version 0.73 introduced large scale magic spells, minibosses, more bosses, houses, and a village level.<br>
+Houses were designed to be destructible based on research and code completed for version 0 - The Cursed Castle.<br>
+<br><br>
+<img src="../Assets/TSK_073.gif"><br>
+<br><br>
+
+
+
+<br><br>
+<h3>Version 0.74</h3>
+
+Version 0.74 focused on how systems interact, such as actors swimming, diving, while holding objs or not.<br>
+The pet system was also expanded to allow dogs to swim. Alot of refactoring done.<br>
+<br><br>
+<img src="../Assets/TSK_074.gif"><br>
+<br><br>
+
+
+
+
+<br><br>
+<h3>Version 0.76</h3>
+
+Version 0.76 focused on expanding the game's dungeons and bosses and gameplay.<br>
+Climbing was added, along with backpacking pets. Boat objects were added as well.<br>
+<br><br>
+<img src="../Assets/TSK_076.gif"><br>
+<br><br>
+
+
+
+<br><br>
+<h3>Version 0.77</h3>
+
+Version 0.77 added color and additional objects, along with dungeon variety.<br>
+<br><br>
+<img src="../Assets/TSK_077release.gif"><br>
+<br><br>
+
+
+
+
+
+<br><br>
+<h3>Version 0.79</h3>
+
+Version 0.79 added a ton of polish and bug fixes, along with tons of crazy ideas.<br>
+<br><br>
+<img src="../Assets/TSK_079A.gif"><br>
+<img src="../Assets/TSK_079B.gif"><br>
+<img src="../Assets/TSK_079C.gif"><br>
+<img src="../Assets/TSK_079D.gif"><br>
+<img src="../Assets/TSK_079E.gif"><br>
+<br><br>
+
+
+
+
+
+
+
+<br><br><br>
+<br><br><br>
+<br><br><br>
+</article>
+</body>
+</html>
