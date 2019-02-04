@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<title>MonoGame Getting Started Guide</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+<article>
+
+<h1>What Is Mutable Design?</h1>
+
+<p>
+
+Right now, Mutable Design is many combined, nebulous ideas that I'm still picking apart.<br>
+<br>
+1. All allocation should happen at program boot.<br>
+2. Past program boot, no data or object should be created using the 'new' keyword.<br>
+3. Pools are used for all data types and objects that work is performed on.<br>
+4. structs, and immutable data types should not be used, due to their cost.<br>
+<br>
+
+
+
+<b>Suggested Guidelines</b><br>
+<br>
+1. Because we are embracing mutability, outlaw design such as 'Global Variables' are now acceptable.<br>
+2. Separate Functionality and Data.<br>
+3. Keep Functions pure, if they accept parameters.<br>
+4. Functions without parameters are expected to alter global program state responsibly.<br>
+5. Use global classes to group similar functions. Example: Functions_Draw.Draw().<br>
+6. Localize responsibility of a function - the function should do a single thing, simply.<br>
+7. Single responsibility function classes are the best, but not always possible, see below code<br>
+<br>
+<br>
+<textarea rows="28" readonly>
+//single responsibility function class example 1 
+public static class Draw_Functions;
+Draw_Functions.Draw(Object);
+Draw_Functions.Draw(Sprite);
+Draw_Functions.Draw(String, int X, int Y, Font);
+//draw_fns only has one method, .Draw(),
+//which accepts a variety of parameters
+
+//example2
+public static class Animation_Functions;
+Animation_Functions.Animate(Object);
+Animation_Functions.Animate(Sprite);
+
+//multiple responsibility function class example 1 
+public static class Collision_Functions;
+Collision_Functions.SetVelocity(Object);
+Collision_Functions.CheckCollisions(Object);
+Collision_Functions.ResolveCollisions(Object);
+
+//multiple responsibility function class example 2
+public static class Particle_Functions;
+Particle_Functions.Spawn(ParticleType, int X, int Y);
+Particle_Functions.Update(Particle);
+Particle_Functions.Draw(ParticlePool);
+</textarea>
+
+
+
+
+
+
+
+<br><br><br><br>
+
+
+
+Mutable Design Key Points:<br>
+<ul>
+  <li>is very fast to work and develop with, quickly connect and disconnect data and logic</li>
+  <li>uses less lines of code and less abstractions to accomplish the same task</li>
+  <li>does not suffer allocation or deallocation costs, or garbage collections</li>
+  <li>can adapt quickly to changing program specifications, due to global nature</li>
+  <li>can be written to be modular or dependent</li>
+  <li>can have pure or impure functions</li>
+  <li>can be tested, asserted, and debugged in an expected manner</li>
+  <li>supports multithreading in the traditional model, using locks/mutexes, etc..</li>
+  <li>also offers new strategies for multithreading, using mutable read/write buffers</li>
+  <li>can be mixed with other paradigms, even immutable designs</li>
+  <li>has been around for a long time, but just hasn't been properly recognized</li>
+</ul> 
+
+
+</p>
+
+<br><br><br>
+<br><br><br>
+<br><br><br>
+</article>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<title>//MrGrak</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+<article>
+
+
+<h1>Mutable Game Design</h1>
+
+<p>
+In this article, a mutable gameloop is presented as a C# console application.<br>
+We discuss how the application runs and handles global mutable program state.<br>
+<br>
+
+
+
+<h3>Console Gameloop Example 1</h3>
+
+First, the code for the gameloop is presented.<br>
+Then, the code is modified to be timed and tested.<br>
+<br>
+<a href="../Assets/ConsoleGameloop1.txt" target="_blank">Console Gameloop 1</a>.<br>
+<a href="../Assets/ConsoleGameloop1Timed.txt" target="_blank">Console Gameloop 1 Timed</a>.<br>
+<br>
+
+
+
+
+
+
+<h3>Explanation of Code</h3>
+
+In this console app example, we create an Actor class that has an X, Y position,<br>
+and an active boolean. this is all we need to model an actor in our simulation, a<br>
+X and Y position and a boolean to tell the system this actor is 'alive' or 'dead'.<br>
+<br>
+Then we create a Pool class, which only has a list of Actors. We will use this list<br>
+of Actors to represent all the actors in the game simulation. To update the game,<br>
+we will iterate / loop over this list of actors, modifying their values.<br>
+<br>
+Then we create the Simulation Class, which will handle all responsibilities for<br>
+the game simulation, including updating the actors via the Pool object created above.<br>
+The Simulation class contains the goal position, and a counter to track how many<br>
+actors are active / remaining in the simulation. Active actors are processed by<br>
+Simulation.Run().<br>
+<br>
+Sim.Run() first calls the Setup() method, to ensure the Simulation is in a proper<br>
+state before starting. Setup() makes all actors active, and places them in a manner<br>
+so they dont overlap. Setup() also resets the activeActors counter. Once Setup()<br>
+completes, we begin the work of the simulation. First, we establish the exit condition.<br>
+If there are 1 or less active actors, then we end the Simulation. If that evaluates <br>
+to false, then we continue to the next step - checking to see if the actor is active.<br>
+<br>
+If we have an active actor, we then move the actor towards the goal position per axis.<br>
+After the move phase of work has completed, then we do the collision checking work.<br>
+This is done simply by comparing the actor's position (X,Y) to all other actor positions.<br>
+If two actors occupy the same position, then they are overlapping / colliding, and the<br>
+actor we are checking is set to be inactive. When an actor becomes inactive, they<br>
+no longer move or are collision checked by the simulation, essentially making the actor<br>
+dead. Once enough actors have 'died' from collisions, the simulation ends.<br>
+<br>
+In <b>ConsoleGameloop1</b>, we output the number of active actors to the console, to<br>
+see if the simulation is working as designed.<br>
+<br>
+In <b>ConsoleGameloop1Timed</b>, we average how long Simulation.Run() takes to run <br>
+many times. We output these values to the console, along with the averages.<br>
+<br>
+Below is the console output of ConsoleGameloop1Timed:<br>
+
+<br>
+<img src="../Assets/consoleGameloop1TimedResults.png" ><br>
+<br>
+
+</p>
+
+
+
+
+
+<br><br><br>
+<br><br><br>
+<br><br><br>
+</article>
+</body>
+</html>

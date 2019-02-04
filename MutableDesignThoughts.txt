@@ -1,0 +1,316 @@
+
+public void Slow()
+{
+    long nthPrime = FindPrimeNumber(1000); //set higher value for more time
+}
+
+public long FindPrimeNumber(int n)
+{
+    int count=0;
+    long a = 2;
+    while(count<n)
+    {
+        long b = 2;
+        int prime = 1;// to check if found a prime
+        while(b * b <= a)
+        {
+            if(a % b == 0)
+            {
+                prime = 0;
+                break;
+            }
+            b++;
+        }
+        if(prime > 0)
+        {
+            count++;
+        }
+        a++;
+    }
+    return (--a);
+}
+
+
+various comparisons of oop, functional, and mutable systems.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+immutability
+immutability is fine in a mutable design, if it remains local to the method creating it.
+this will cause garbage to be collected eventually, which is an unwanted program state.
+this can be avoided using mutable data that is scoped to the public static class which
+wraps access to the method that is creating the immutable data.
+
+public static Example
+{
+	static int g;
+	public static void MutableFn()
+	{
+		for(g=0; g<100; g++){}
+	}
+	public static void ImmutableFn()
+	{
+		for(int g=0; g<100; g++){}
+	}
+}
+
+we hope the compiler sees our ImmutableFn and converts it to use a single int, instead
+of creating that int each time the method is called. using the MutableFn makes it clear
+exactly whats happening, and no garbage data can possibly be created. we can also reuse
+this static int g for other methods local to the Example class.
+
+
+
+
+
+
+
+
+
+
+
+Guidelines
+
+
+
+separate data from functionality 
+
+bundling data, functionality, execution, and state all together is the root of many
+problems in programming. we should strive to separate these concepts in our code as
+much as possible. doing so makes it easier to reason about code.
+
+first, separate data from functionality.
+here we have an actor class with data and functionality combined.
+public class Actor
+{
+	int X, Y, Hp, Attack, Speed;
+	public void Attack(){}
+	public void Dash(){}
+	public void Die(){}
+}
+List<Actor> ActorPool; //create an amount of actors
+ActorPool[16].Attack(); //use one
+
+this isn't 'bad code', it just bundles data, functionality, execution, and state
+all together and makes it difficult to reason about an actor instance at any given
+time. let's separate data and functionality to get a different look at the actor.
+public class Actor
+{
+	int X, Y, Hp, Attack, Speed;
+}
+public static class Actor_Functions
+{
+	public void Attack(Actor){}
+	public void Dash(Actor){}
+	public void Die(Actor){}
+}
+List<Actor> ActorPool; //create an amount of actors
+Actor_Functions.Attack(ActorPool[16]); //use one
+
+we literally separate the data and functionality, and pass the data into the
+method that we want to use. this makes the methods 'pure' in the sense that
+the methods only alter the fields of the actor instance that was passed in as
+a parameter. this is mutating the actor's state. instead of thinking about an
+actor as a set of data and functionality, we can think about the actor as just
+a piece of data. then we can think about how we want to transform and mutate
+that piece of data. instead of an actor having to contain everything an actor
+might do, we can spread that functionality out to other classes, where it makes
+sense to do so. Example gameloop logic targeting an Actor:
+
+Input_Functions.MapControllerInput(Actor);
+Movement_Functions.SetVelocity(Actor);
+Collision_Functions.CheckCollisions(Actor);
+Actor_Functions.SetState(Actor);
+Animation_Functions.Animate(Actor);
+Draw_Functions.Draw(Actor);
+
+we can see how the data we conceptually hold as an 'Actor' is transformed
+across many different systems sequentially. this allows us as program designers
+to 'zoom out' and see a bigger, different picture of how our logic flows.
+
+consider that all these systems are conceptually part of an actor object.
+actors accept input, move, collide, have internal state, animate, and draw.
+we could put all these different types of functionality into the actor class,
+but then the actor class would be very large and complicated, and it's internal
+state would be horrifying to reason about. by separating data and functionality,
+we can scale up the systems to be more complex, while maintaining scopes of
+responsibility that are easy to communicate with.
+
+
+
+
+
+
+
+
+
+separate program execution and logic
+
+what happens if we keep separating data and functionality in this manner?
+we can design a program where all methods are created upon program initialization.
+all data is created upon program initialization. everything that describes the
+program is created prior to main() executing. and in this design, the program's
+logic structure is separated from the programs execution through it.
+
+the programs logic branches do not change overtime. since they do not change,
+the programs execution through those logic branches describes all possible
+states the program can be executing the logic structure in. 
+
+
+program state
+
+now we need to consider the data the program is using - as it executes.
+this is known as program state, the current branch of execution plus all the 
+programs variables current values. consider that every program that we use in our 
+daily lives mutates program state, otherwise those program would never close, 
+because they would always be in the initialization, or booting state. program 
+state is not bad, it is necessary. program state is also extremely complex.
+so to manage this complexity, overtime programmers decided to break this big
+problem down into smaller problems, which makes sense. however, many programmers
+take this to an extreme, and break their medium sized problems into smaller problems.
+Then break those problems into smaller and smaller problems, turning those into
+functions, the building chains of functions to describe a process happening upon
+some data. these programmers fragment the programs state into smaller and smaller
+pieces, with the hope of making each one understandable and reuseable in some way.
+the summary result is a complete fragmenting of program state and logic across
+thousands of objects and variables that makes reasoning about overall program
+state and design almost impossible. another side effect is that fragmenting logic
+and state makes it very difficult to redesign program flow, as each fragment of
+logic and data is somehow dependent on other fragments via message passing or
+parameters. 
+
+we should have tools for managing program state that are more than just "fragment it".
+that is what encapsulation + privacy does in the OOP paradigm, hides state.
+that is what immutability + functional programming does too, hides state.
+
+why are we hiding and fragmenting program state?
+
+program state is fragmented between thousands of objects with the idea that each
+object is responsible for maintaining it's own internal state. on a surface level,
+this is a good idea. we need to be able to create and maintain local state/scopes.
+but this property of locality can cause problems when taken to the extreme.
+
+real systems grow to levels of complexity that are difficult to reason about,
+and encapsulating / hiding logic complexity across many different scopes makes the 
+overall system more complex to reason about and understand. functionality that
+could be shared is often not shared or duplicated, due to that logic being in a local scope.
+moving this functionality to an accessible scope leads to a redesign of the scopes
+that segment and separate all the program's data and logic. modifying program flow in
+these heavily fragmented OOP codebases is often times difficult due to what 'manager'
+or other conceptual 'do-er' class is hiding or affecting the program flow. instead of
+a manager, i'd like to see the manager's functions, so i know what the manager does.
+and if the manger is truly a manager, then it doesn't really need it's own data.
+it should be managing the data of other objects - making it a class that only has
+pure functions - which most managers / do-er classes dont implement at all. instead
+they become a dumping ground for logic and data that are related to a concept that
+this manager/do-er class wraps or is responsible for. ontop of that, these do-er classes
+usually store reference to other objects that they communicate with via message passing,
+or function calls - or perhaps they use events to abstract away the idea of even calling
+a method directly. as the levels of complexity pile up, we get lost in what exactly
+this do-er class is really responsible for. it's easier to reason about a single function,
+than it is to reason about what a class 'represents' conceptually. so i suggest we 
+decompose the manager / do-er classes into global classes of pure functions. if we cannot
+make a function pure, or dont want to, we can use impure functions to get the job done.
+
+alternatively, we can attempt to localize all work and data until we reach a level
+of abstraction where everything communicated with is seen as a client to the object,
+and where the client is not to be trusted at all. i would describe this style of programming
+as 'defensive programming' - and it is very slow in implementation, because all input
+and parameters are checked, bounded, cleaned, etc.. this is what localizing data and
+logic leads to eventually - trust issues. 
+
+OOP foam of scopes
+
+imagine each object's scope as a bubble. now imagine your program is composed of
+thousands of those bubbles. those scopes are actually pretty small, if you're keeping
+your fns/methods and classes small (using inheritance). so that means your program is 
+composed of thousands of little scopes, each passing messages to each other, parameters,
+creating threads, writing data - all not trusting each other. it's generally confusing.
+each one of those messages passed between each little scope also alters overall program state.
+reasoning about program state at this level of fragmentation is very time consuming.
+if we were to reduce the amount of scopes, then reasoning would be much easier.
+
+a different look at program state
+
+what if instead of fragmenting program state, we tried to keep it together as much
+as possible? what if we used a single object to contain all the values the program
+would use for it's entire life? this would make it very easy to reason about the
+programs state - the variables values - at any given time. the tradeoff here is it
+makes it very difficult to reason about program execution, as all methods and functions
+will be using that same object for all calculations and work. we have to find a balance
+between these two opposing forces - how do we group and separate data and logic well,
+without fragmenting program state into millions of pieces?
+
+by using the most hated and vilified objects in the programming universe: globals.
+more specifically - global objects + classes. by making these classes singular in
+instance, and making them local to program or namespace scope, they are easily
+accessible from any where, and they retain the ability to wrap data and logic.
+we have replaced message passing with a global, public api for our data and logic.
+taken to a more buddhist extreme, we can make all our fields and methods public,
+removing the concept of privacy or ownership entirely. this has the net effect of
+allowing a vast flexibility when designing how systems should interact, while also
+completely exposing all program state. is this dangerous? maybe, as anything can write
+program state. if done poorly, absolutely. as with all things, it can be done well.
+when done well, exposing program state globally via mutable design is very fast, flexible,
+and ... modular?
+
+writing modular program state with mutable code, using public static classes
+
+when you make a class public static, it becomes accessible anywhere within the namespace
+it lives in. outside the namespace, you can access the class using it's namespace prefix,
+so public static classes can be called from other namespaces without a problem. access is
+available across namespaces very easily, in other words.
+
+a public static class that contains only pure functions on basic data types can be added
+to a project or namespace without any issues. it creates a self-contained scope of data 
+and functionality that is accessible globally, making it easy to use anywhere. you dont 
+have to create an instance of this class, as it already 'exists' in it's parent namespace.
+if this global class contains all it's functionality and data, and is used in the program,
+then the class is part of the program's overall state. By combining well designed public
+static classes, one can create a program where the state is modular based on what classes
+have been added. In other words, you can copy and paste well designed public static classes
+into a single program and they will remain self-contained but namespace accessible. hey,
+that sounds like a singleton?
+
+public static classes vs singletons
+
+the public static class acts as an OOP singleton would, without the clutter or clunkiness,
+or the ability to construct one as needed. in fact, you cannot create an instance of a public
+static class, at all. the 'global instance' exists the moment you define/write it in code.
+which is a really interesting property, that is often ignored. this property allows you to
+connect two public static classes methods together, without any references to each other,
+without any message passing - only calling the class method and passing parameters (or not).
+
+there is great power in being accessible everywhere, anytime. 911 on any us phone, for example.
+we have these globally accessible interfaces in our daily lives, but we still struggle
+to properly implement them in our programs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

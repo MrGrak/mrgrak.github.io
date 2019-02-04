@@ -24,7 +24,7 @@ a.home-link, a:hover.home-link {
 	height: 100px;
 	margin-top: 0px;
 	margin-left: 0px;
-	background: rgba(255, 255, 255, 1.0);
+	background: rgba(240, 240, 240, 1.0);
 	border-bottom: 1px solid #e5e5e5;
 	overflow: hidden;
 }
@@ -74,7 +74,7 @@ iframe {
 
 
 body, html  {
-	background-color: #ffffff;
+	background-color: rgba(240, 240, 240, 1.0);
 	color: #393939;
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 	font-size:15px;
@@ -97,7 +97,7 @@ a:hover { text-decoration: none; color: #555453; }
 a:active { text-decoration: none; color: #ADA8A5; }
 a {line-height: 1.6em;}
 article {
-    margin-left: 10px;
+    margin-left: 0px;
     border-left: 0px solid gray;
     padding: 1em;
     overflow: hidden;
