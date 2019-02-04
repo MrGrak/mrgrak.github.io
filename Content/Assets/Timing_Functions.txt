@@ -1,0 +1,179 @@
+using System;
+using System.Text;
+using System.Diagnostics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+
+namespace BaseProject
+{
+
+    public struct DataStruct
+    {   
+        public Boolean myBoolean;
+        public void Test()
+        {
+
+        }
+        public Boolean TestB()
+        {
+            return myBoolean;
+        }
+    }
+
+    public class DataClass
+    {   
+        public Boolean myBoolean;
+        public void Test()
+        {
+
+        }
+        public Boolean TestB()
+        {
+            return myBoolean;
+        }
+    }
+
+
+
+
+
+    public class Game1 : Game
+    {
+        GraphicsDeviceManager graphics;
+        SpriteBatch spriteBatch;
+
+        public Stopwatch stopWatch = new Stopwatch();
+        public Stopwatch total = new Stopwatch();
+        public TimeSpan timespan;
+        public long averageTicks;
+        public long totalTicks;
+        public long frameCount;
+
+        Vector2 position = new Vector2(4, 1);
+        float rotation = 0.0f;
+        Vector2 origin = new Vector2(0, 0);
+        float scale = 1.0f;
+        SpriteEffects spriteEffect = SpriteEffects.None;
+        float zDepth = 0.1f;
+        SpriteFont BitmapFont;
+        Color color = Color.White;
+
+        StringBuilder e = new StringBuilder();
+        String text;
+        int i;
+
+
+
+
+        DataStruct struct1 = new DataStruct();
+        DataClass class1 = new DataClass();
+        Boolean myBoolean;
+
+        public void Test()
+        {
+
+        }
+        public Boolean TestB()
+        {
+            return myBoolean;
+        }
+
+
+
+
+        public Game1()
+        {
+            graphics = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
+            this.IsMouseVisible = true;
+            graphics.PreferredBackBufferWidth = 640;
+            graphics.PreferredBackBufferHeight = 360;
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+        }
+
+        protected override void LoadContent()
+        {
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            BitmapFont = Content.Load<SpriteFont>("Font_Pixel");
+            total.Reset(); total.Start();
+            averageTicks = 0;
+            totalTicks = 0;
+            frameCount = 0;
+        }
+
+        protected override void UnloadContent()
+        {
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            stopWatch.Reset();
+            stopWatch.Start();
+            base.Update(gameTime);
+            //baseline (no forloop) = 5 ticks
+            for (i = 0; i < 1000000; i++) //
+            {   //over 10,000 frame minimum
+
+                //count = 1m //19,853
+
+                //a simple unnamed scope 
+                //{ } //20,866
+
+                //if (myBoolean) { } //23,310 //local bool
+                //Test(); //44,800 //calling a local function
+                //if (TestB()) { } //131,955 //local func with return (ouch)
+
+                //struct
+                //if (struct1.myBoolean){} //23,300
+                //struct1.Test(); //45,420
+                //if (struct1.TestB()){} //130,350
+                
+                //class
+                //if (class1.myBoolean){} //25,400
+                //class1.Test(); //46,400
+                //if (class1.TestB()){} //136,600
+            }
+        }
+        
+        protected override void Draw(GameTime gameTime)
+        {
+            stopWatch.Stop();
+            timespan = stopWatch.Elapsed;
+            frameCount++;
+            if (frameCount > 10) //discard the first 10 frames
+            {
+                totalTicks += timespan.Ticks;
+                averageTicks = totalTicks / (frameCount - 10);
+            }
+
+            //baseline avg 5 from 10,000 frames
+            e.Append("ticks this frame: " + timespan.Ticks);
+            e.Append("\navg ticks per frame: " + averageTicks);
+            e.Append("\ntotal frames: " + frameCount);
+            e.Append("\ntotal time: " + total.Elapsed.ToString(@"hh\:mm\:ss"));
+            text = e.ToString();
+            e.Clear();
+
+            //draw
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            spriteBatch.Begin();
+            spriteBatch.DrawString(
+                BitmapFont,
+                text,
+                position,
+                color,
+                rotation,
+                origin,
+                scale,
+                spriteEffect,
+                zDepth);
+            spriteBatch.End();
+            base.Draw(gameTime);
+        }
+    }
+}

@@ -1,0 +1,178 @@
+using System;
+using System.Text;
+using System.Diagnostics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+
+namespace BaseProject
+{
+    public class Game1 : Game
+    {
+        GraphicsDeviceManager graphics;
+        SpriteBatch spriteBatch;
+
+        public Stopwatch stopWatch = new Stopwatch();
+        public Stopwatch total = new Stopwatch();
+        public TimeSpan timespan;
+        public long averageTicks;
+        public long totalTicks;
+        public long frameCount;
+
+        Vector2 position = new Vector2(4, 1);
+        float rotation = 0.0f;
+        Vector2 origin = new Vector2(0, 0);
+        float scale = 1.0f;
+        SpriteEffects spriteEffect = SpriteEffects.None;
+        float zDepth = 0.1f;
+        SpriteFont BitmapFont;
+        Color color = Color.White;
+
+        StringBuilder e = new StringBuilder();
+        String text;
+        int i;
+
+
+
+        //common 2d game data types
+        Boolean myBoolean = true; //1 byte
+        byte myByte = 8; //1 byte
+        short myShort = 16; //2 bytes
+        int myInt = 32; //4 bytes
+        float myFloat = 3.2f; //4 bytes
+        Color myColor = new Color(8, 8, 8, 8); //4 bytes
+        Vector2 myVector2 = new Vector2(3.2f, 3.2f); //8 bytes
+        Point myPoint = new Point(32, 32); //8 bytes
+
+        Boolean testBoolean;
+        byte testByte; //1 byte
+        short testShort; //2 bytes
+        int testInt; //4 bytes
+        float testFloat; //4 bytes
+        Color testColor; //4 bytes
+        Vector2 testVector2; //8 bytes
+        Point testPoint; //8 bytes
+
+
+
+
+        public Game1()
+        {
+            graphics = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
+            this.IsMouseVisible = true;
+            graphics.PreferredBackBufferWidth = 640;
+            graphics.PreferredBackBufferHeight = 360;
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+        }
+
+        protected override void LoadContent()
+        {
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            BitmapFont = Content.Load<SpriteFont>("Font_Pixel");
+            total.Reset(); total.Start();
+            averageTicks = 0;
+            totalTicks = 0;
+            frameCount = 0;
+        }
+
+        protected override void UnloadContent()
+        {
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            stopWatch.Reset();
+            stopWatch.Start();
+            base.Update(gameTime);
+            //baseline (no forloop) = 5 ticks
+            for (i = 0; i < 1000000; i++) //
+            {   //over 10,000 frame minimum
+
+                //count = 1000 //29 ticks
+                //testBoolean = myBoolean; //30
+                //testByte = myByte; //35
+                //testShort = myShort; //35
+                //testInt = myInt; //37
+                //testFloat = myFloat; //35
+                //testColor = myColor; //34
+                //testVector2 = myVector2; //38
+                //testPoint = myPoint; //35
+                //all = 88 
+
+                //count = 10,000 //258 ticks
+                //testBoolean = myBoolean; //283
+                //testByte = myByte; //284
+                //testShort = myShort; //281
+                //testInt = myInt; //284
+                //testFloat = myFloat; //308
+                //testColor = myColor; //281
+                //testVector2 = myVector2; //286
+                //testPoint = myPoint; //297
+                //all = 708
+
+                //count = 100,000 //2105 ticks
+                //testBoolean = myBoolean; //2273
+                //testByte = myByte; //2492
+                //testShort = myShort; //2302
+                //testInt = myInt; //2252
+                //testFloat = myFloat; //2535
+                //testColor = myColor; //2251
+                //testVector2 = myVector2; //2405
+                //testPoint = myPoint; //2407
+                //all = 6740
+
+                //count = 1,000,000 //20,080 ticks
+                //testBoolean = myBoolean; //22,398
+                //testByte = myByte; //21,671
+                //testShort = myShort; //22,350
+                //testInt = myInt; //21,656
+                //testFloat = myFloat; //23,500
+                //testColor = myColor; //22,990
+                //testVector2 = myVector2; //24,596
+                //testPoint = myPoint; //24,240
+                //all = 59,022
+            }
+        }
+        
+        protected override void Draw(GameTime gameTime)
+        {
+            stopWatch.Stop();
+            timespan = stopWatch.Elapsed;
+            frameCount++;
+            if (frameCount > 10) //discard the first 10 frames
+            {
+                totalTicks += timespan.Ticks;
+                averageTicks = totalTicks / (frameCount - 10);
+            }
+
+            //baseline avg 5 from 10,000 frames
+            e.Append("ticks this frame: " + timespan.Ticks);
+            e.Append("\navg ticks per frame: " + averageTicks);
+            e.Append("\ntotal frames: " + frameCount);
+            e.Append("\ntotal time: " + total.Elapsed.ToString(@"hh\:mm\:ss"));
+            text = e.ToString();
+            e.Clear();
+
+            //draw
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            spriteBatch.Begin();
+            spriteBatch.DrawString(
+                BitmapFont,
+                text,
+                position,
+                color,
+                rotation,
+                origin,
+                scale,
+                spriteEffect,
+                zDepth);
+            spriteBatch.End();
+            base.Draw(gameTime);
+        }
+    }
+}

@@ -1,0 +1,173 @@
+using System;
+using System.Text;
+using System.Diagnostics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.Threading;
+
+namespace BaseProject
+{
+    public class Game1 : Game
+    {
+        GraphicsDeviceManager graphics;
+        SpriteBatch spriteBatch;
+
+        public Stopwatch stopWatch = new Stopwatch();
+        public Stopwatch total = new Stopwatch();
+        public TimeSpan timespan;
+        public long averageTicks;
+        public long totalTicks;
+        public long frameCount;
+
+        Vector2 position = new Vector2(4, 1);
+        float rotation = 0.0f;
+        Vector2 origin = new Vector2(0, 0);
+        float scale = 1.0f;
+        SpriteEffects spriteEffect = SpriteEffects.None;
+        float zDepth = 0.1f;
+        SpriteFont BitmapFont;
+        Color color = Color.White;
+
+        StringBuilder e = new StringBuilder();
+        String text;
+        int i;
+
+
+
+
+
+
+        public long avgWorkTicks;
+        public long totalWorkTicks;
+        public void WorkFunction()
+        {
+            Stopwatch total = new Stopwatch();
+            total.Start();
+
+            //do some work
+            Boolean myBool; //create value
+            int g;
+            for (g = 0; g < 10000; g++) //10k times
+            {
+                myBool = true; //set value
+                if (myBool) { } //read/check value
+            }
+            //note we're keeping all data within scope
+            total.Stop();
+            //until here, where there are 4 non-atomic writes
+            avgWorkTicks += total.ElapsedTicks;
+            avgWorkTicks = avgWorkTicks / 2;
+
+            totalWorkTicks += total.ElapsedTicks;
+            avgWorkTicks = totalWorkTicks / (frameCount - 10);
+
+            //but this doesn't really matter because the
+            //method is called once per frame, not many times,
+            //so it's 99.9% likely the thread will complete before
+            //the next thread begins
+        }
+        
+
+
+
+
+
+
+        public Game1()
+        {
+            graphics = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
+            this.IsMouseVisible = true;
+            graphics.PreferredBackBufferWidth = 640;
+            graphics.PreferredBackBufferHeight = 360;
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+        }
+
+        protected override void LoadContent()
+        {
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            BitmapFont = Content.Load<SpriteFont>("Font_Pixel");
+            total.Reset(); total.Start();
+            averageTicks = 0;
+            totalTicks = 0;
+            frameCount = 0;
+            avgWorkTicks = 0;
+        }
+
+        protected override void UnloadContent()
+        {
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            stopWatch.Reset();
+            stopWatch.Start();
+            base.Update(gameTime);
+            //baseline (no forloop) = 5 ticks
+
+            if (frameCount > 10) //ignore the first 10 frames
+            {
+                //at what point is threading a bad idea?
+                for(i = 0; i < 10000; i++)
+                {
+                    //work in sequence
+                    //WorkFunction();
+                    //2960 frame, work 963 (x10)
+                    //26300 frame, work 8410 (x100)
+                    //240,000 frame, work 1.7m (x1000) - breaks here
+
+                    //work in parallel
+                    ThreadPool.QueueUserWorkItem(a => WorkFunction());
+                    //160 frame, work 890 (x10)
+                    //350 frame, work 8600 (x100)
+                    //1515 frame, work 86,200 (x1000) - doesn't break at all
+                    //70,000 frame, work 450,000 (x10000) - starts to slowdown here
+                    //note: cpu is at 93% use at 10k iterations - almost full saturation
+                }
+            }
+        }
+        
+        protected override void Draw(GameTime gameTime)
+        {
+            stopWatch.Stop();
+            timespan = stopWatch.Elapsed;
+            frameCount++;
+            if (frameCount > 10) //discard the first 10 frames
+            {
+                totalTicks += timespan.Ticks;
+                averageTicks = totalTicks / (frameCount - 10);
+            }
+
+            //baseline avg 5 from 10,000 frames
+            e.Append("ticks this frame: " + timespan.Ticks);
+            e.Append("\navg ticks per frame: " + averageTicks);
+            e.Append("\ntotal frames: " + frameCount);
+            e.Append("\ntotal time: " + total.Elapsed.ToString(@"hh\:mm\:ss"));
+            e.Append("\n\nfunction avg ticks: " + avgWorkTicks);
+
+            text = e.ToString();
+            e.Clear();
+
+            //draw
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            spriteBatch.Begin();
+            spriteBatch.DrawString(
+                BitmapFont,
+                text,
+                position,
+                color,
+                rotation,
+                origin,
+                scale,
+                spriteEffect,
+                zDepth);
+            spriteBatch.End();
+            base.Draw(gameTime);
+        }
+    }
+}

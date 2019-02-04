@@ -1,0 +1,599 @@
+using System;
+using System.Text;
+using System.Diagnostics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.Threading;
+
+namespace BaseProject
+{
+    //timing c#, .net, and monogame using 1000s of threads
+
+
+    #region Job Manager and Job Data
+
+    //make a class to store jobs and job data
+    public static class JobManager
+    {
+        //one list represents data about jobs, the other represents the work to do
+        public static List<JobData> JobData = new List<JobData>();
+        public static List<Job> Jobs = new List<Job>();
+    }
+
+    //create a class to hold our job data to track and display
+    public class JobData
+    {
+        public string Name;
+        public long TotalTicks = 0;
+        public int TotalFrames = 0;
+        public int Completions = 0;
+        public short Average = 0;
+        public JobData(string name) { Name = name; }
+    } //force name upon creation
+
+    #endregion
+
+
+    #region Base Job Class
+
+    public abstract class Job
+    {   //create a base class for our 'jobs' to DoWork()
+        public virtual void DoWork(int JobIndex) { }
+    }
+
+    #endregion
+
+
+    #region Timing Jobs
+
+    //these extend base class with unique DoWork() method
+
+    #region Basic Data Types
+
+    public class Time_1000Booleans : Job
+    {
+        public override void DoWork(int JobIndex)
+        {
+            Stopwatch total = new Stopwatch();
+            total.Start();
+
+            //create work values
+            int i;
+            List<Boolean> booleans = new List<bool>();
+            for (i = 0; i < 1000; i++) { booleans.Add(true); }
+            //do work
+            for (i = 0; i < 1000; i++)
+            { if (booleans[i]) { booleans[i] = false; } }
+
+            total.Stop(); //record completed work
+            JobManager.JobData[JobIndex].TotalTicks += total.ElapsedTicks;
+            JobManager.JobData[JobIndex].Completions++;
+        }
+    }
+
+    public class Time_1000Bytes : Job
+    {
+        public override void DoWork(int JobIndex)
+        {
+            Stopwatch total = new Stopwatch();
+            total.Start();
+
+            //create work values
+            int i;
+            List<Byte> bytes = new List<Byte>();
+            for (i = 0; i < 1000; i++) { bytes.Add(64); }
+            //do work
+            for (i = 0; i < 1000; i++) { bytes[i] += 64; }
+
+            total.Stop(); //record completed work
+            JobManager.JobData[JobIndex].TotalTicks += total.ElapsedTicks;
+            JobManager.JobData[JobIndex].Completions++;
+        }
+    }
+
+    public class Time_1000Shorts: Job
+    {
+        public override void DoWork(int JobIndex)
+        {
+            Stopwatch total = new Stopwatch();
+            total.Start();
+
+            //create work values
+            int i;
+            List<short> shorts = new List<short>();
+            for (i = 0; i < 1000; i++) { shorts.Add(64); }
+            //do work
+            for (i = 0; i < 1000; i++) { shorts[i] += 64; }
+
+            total.Stop(); //record completed work
+            JobManager.JobData[JobIndex].TotalTicks += total.ElapsedTicks;
+            JobManager.JobData[JobIndex].Completions++;
+        }
+    }
+
+    public class Time_1000Ints : Job
+    {
+        public override void DoWork(int JobIndex)
+        {
+            Stopwatch total = new Stopwatch();
+            total.Start();
+
+            //create work values
+            int i;
+            List<int> Ints = new List<int>();
+            for (i = 0; i < 1000; i++) { Ints.Add(32); }
+            //do work
+            for (i = 0; i < 1000; i++)
+            { Ints[i] += i / 10; }
+
+            total.Stop(); //record completed work
+            JobManager.JobData[JobIndex].TotalTicks += total.ElapsedTicks;
+            JobManager.JobData[JobIndex].Completions++;
+        }
+    }
+
+    public class Time_1000Floats : Job
+    {
+        public override void DoWork(int JobIndex)
+        {
+            Stopwatch total = new Stopwatch();
+            total.Start();
+
+            //create work values
+            int i;
+            List<float> xPos = new List<float>();
+            for (i = 0; i < 1000; i++) { xPos.Add(1.0f); }
+            //modify work values
+            for (i = 0; i < 1000; i++) { xPos[i] += i; }
+
+            total.Stop(); //record completed work
+            JobManager.JobData[JobIndex].TotalTicks += total.ElapsedTicks;
+            JobManager.JobData[JobIndex].Completions++;
+        }
+    }
+
+    public class Time_1000ColorRGBAs : Job
+    {
+        public override void DoWork(int JobIndex)
+        {
+            Stopwatch total = new Stopwatch();
+            total.Start();
+
+            //create work values
+            int i;
+            List<Byte> Rvalues = new List<byte>();
+            List<Byte> Gvalues = new List<byte>();
+            List<Byte> Bvalues = new List<byte>();
+            List<Byte> Avalues = new List<byte>();
+            //populate work values
+            for (i = 0; i < 1000; i++)
+            {
+                Rvalues.Add(125);
+                Gvalues.Add(125);
+                Bvalues.Add(125);
+                Avalues.Add(0);
+            }
+            //modify work values
+            for (i = 0; i < 1000; i++)
+            {
+                Rvalues[i] += 10;
+                Gvalues[i] -= 10;
+                Bvalues[i] += 10;
+                Avalues[i] = 255;
+            }
+
+            total.Stop(); //record completed work
+            JobManager.JobData[JobIndex].TotalTicks += total.ElapsedTicks;
+            JobManager.JobData[JobIndex].Completions++;
+        }
+    }
+
+    public class Time_1000Vector2s : Job
+    {
+        public override void DoWork(int JobIndex)
+        {
+            Stopwatch total = new Stopwatch();
+            total.Start();
+
+            //create work values
+            int i;
+            List<float> xPos = new List<float>();
+            List<float> yPos = new List<float>();
+            //populate work values
+            for (i = 0; i < 1000; i++)
+            { xPos.Add(1.0f); yPos.Add(1.0f); }
+            //modify work values
+            for (i = 0; i < 1000; i++)
+            { xPos[i] += i; yPos[i] -= i; }
+
+            total.Stop(); //record completed work
+            JobManager.JobData[JobIndex].TotalTicks += total.ElapsedTicks;
+            JobManager.JobData[JobIndex].Completions++;
+        }
+    }
+    
+    public class Time_1000Points : Job
+    {
+        public override void DoWork(int JobIndex)
+        {
+            Stopwatch total = new Stopwatch();
+            total.Start();
+
+            //create work values
+            int i;
+            List<int> xPos = new List<int>();
+            List<int> yPos = new List<int>();
+            //populate work values
+            for (i = 0; i < 1000; i++)
+            { xPos.Add(256); yPos.Add(256); }
+            //modify work values
+            for (i = 0; i < 1000; i++)
+            { xPos[i] += i; yPos[i] -= i; }
+
+            total.Stop(); //record completed work
+            JobManager.JobData[JobIndex].TotalTicks += total.ElapsedTicks;
+            JobManager.JobData[JobIndex].Completions++;
+        }
+    }
+
+    #endregion
+
+
+
+
+    #region .net Vector2 vs user struct Vector2
+
+    //test vector2 vs user defined vector2 struct
+    public struct Vector2b
+    {
+        public float X;
+        public float Y;
+        public Vector2b(float Xin, float Yin) { X = Xin;  Y = Yin; }
+    }
+    public class Time_Vector2bStruct : Job
+    {
+        public override void DoWork(int JobIndex)
+        {
+            Stopwatch total = new Stopwatch();
+            total.Start();
+
+            //create work values
+            int i;
+            List<Vector2b> vec2bs = new List<Vector2b>();
+            for (i = 0; i < 1000; i++) { vec2bs.Add(new Vector2b()); }
+            //modify work values (struct is immutable)
+            for (i = 0; i < 1000; i++)
+            { vec2bs[i] = new Vector2b(10, 5); }
+
+            total.Stop(); //record completed work
+            JobManager.JobData[JobIndex].TotalTicks += total.ElapsedTicks;
+            JobManager.JobData[JobIndex].Completions++;
+        }
+    }
+    public class Time_Vector2Struct : Job
+    {
+        public override void DoWork(int JobIndex)
+        {
+            Stopwatch total = new Stopwatch();
+            total.Start();
+
+            //create work values
+            int i;
+            List<Vector2> vec2s = new List<Vector2>();
+            for (i = 0; i < 1000; i++) { vec2s.Add(new Vector2()); }
+            //modify work values (struct is immutable)
+            for (i = 0; i < 1000; i++)
+            { vec2s[i] = new Vector2(10, 5); }
+
+            total.Stop(); //record completed work
+            JobManager.JobData[JobIndex].TotalTicks += total.ElapsedTicks;
+            JobManager.JobData[JobIndex].Completions++;
+        }
+    }
+
+    #endregion
+
+
+
+
+
+
+
+
+
+
+
+    //test forEach vs index in a loop
+    public class TestObject { public int G = 16; }
+    public class Time_IndexLoop : Job
+    {
+        public override void DoWork(int JobIndex)
+        {
+            Stopwatch total = new Stopwatch();
+            total.Start();
+
+            //create work values
+            int i;
+            List<TestObject> testObjs = new List<TestObject>();
+            //populate list
+            for (i = 0; i < 1000; i++) { testObjs.Add(new TestObject()); }
+            //modify list values
+            for (i = 0; i < 1000; i++) { testObjs[i].G += 1; }
+
+            total.Stop(); //record completed work
+            JobManager.JobData[JobIndex].TotalTicks += total.ElapsedTicks;
+            JobManager.JobData[JobIndex].Completions++;
+        }
+    }
+
+    public class Time_ForEachLoop : Job
+    {
+        public override void DoWork(int JobIndex)
+        {
+            Stopwatch total = new Stopwatch();
+            total.Start();
+
+            //create work values
+            int i;
+            List<TestObject> testObjs = new List<TestObject>();
+            //populate list
+            for (i = 0; i < 1000; i++) { testObjs.Add(new TestObject()); }
+            //modify list values
+            foreach (TestObject To in testObjs) { To.G += 1; }
+
+            total.Stop(); //record completed work
+            JobManager.JobData[JobIndex].TotalTicks += total.ElapsedTicks;
+            JobManager.JobData[JobIndex].Completions++;
+        }
+    }
+
+
+
+
+    #endregion
+
+
+
+
+
+
+    public class Game1 : Game
+    {
+
+
+        #region Game1 data types
+
+        GraphicsDeviceManager graphics;
+        SpriteBatch spriteBatch;
+
+        public Stopwatch stopWatch = new Stopwatch();
+        public Stopwatch total = new Stopwatch();
+        public TimeSpan timespan;
+        public long averageTicks;
+        public long totalTicks;
+        public long frameCount;
+
+        Vector2 position = new Vector2(4, 1);
+        float rotation = 0.0f;
+        Vector2 origin = new Vector2(0, 0);
+        float scale = 1.0f;
+        SpriteEffects spriteEffect = SpriteEffects.None;
+        float zDepth = 0.1f;
+        SpriteFont BitmapFont;
+        Color color = Color.White;
+
+        //used to quickly build a string to display data to screen each frame
+        static StringBuilder output = new StringBuilder();
+        String text;
+        int i;
+
+        #endregion
+
+
+        //internal job system values
+        static byte jobsPerFrame = 2; //how many jobs to kick off per frame
+        static short threadsPerJob = 1000; //threads per job per frame
+        static int totalCompletes = 100000; //tests require X completions to stop
+
+
+        #region Functions for Managing Jobs + Job Logic
+
+        public static void Configure()
+        {
+            //run a test to see what the hardware is, then set internal job values
+            //to be implemented in the future
+        }
+
+        public static void PrintJob(JobData Job, int JobIndex)
+        {
+            output.Append(
+                "\n" + Job.Name + 
+                " took " + Job.Average + " ms on avg" +
+                " across " + Job.TotalFrames + " frames");
+        }
+
+        static int t;
+        public static void StartJob(Job Job, int JobIndex)
+        {   //throw the thread count at this job this frame
+            for (t = 0; t < threadsPerJob; t++)
+            { ThreadPool.QueueUserWorkItem(a => Job.DoWork(JobIndex)); }
+        }
+
+        #endregion
+
+
+
+
+        #region Init Game1
+
+        public Game1()
+        {
+            graphics = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
+            this.IsMouseVisible = true;
+            graphics.PreferredBackBufferWidth = 600;
+            graphics.PreferredBackBufferHeight = 800;
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+        }
+
+        #endregion
+
+
+        #region Load Jobs into Job System for Processing
+
+        protected override void LoadContent()
+        {
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            BitmapFont = Content.Load<SpriteFont>("Font_Pixel");
+            total.Reset(); total.Start();
+            averageTicks = 0;
+            totalTicks = 0;
+            frameCount = 0;
+            
+            //add jobs and their corresponding job data to the proper lists
+            JobManager.Jobs.Add(new Time_1000Booleans());
+            JobManager.JobData.Add(new JobData("Time_1000Booleans"));
+            
+            JobManager.Jobs.Add(new Time_1000Bytes());
+            JobManager.JobData.Add(new JobData("Time_1000Bytes"));
+            
+            JobManager.Jobs.Add(new Time_1000Shorts());
+            JobManager.JobData.Add(new JobData("Time_1000Shorts"));
+
+            JobManager.Jobs.Add(new Time_1000Ints());
+            JobManager.JobData.Add(new JobData("Time_1000Ints"));
+
+            JobManager.Jobs.Add(new Time_1000Floats());
+            JobManager.JobData.Add(new JobData("Time_1000Floats"));
+            
+            JobManager.Jobs.Add(new Time_1000ColorRGBAs());
+            JobManager.JobData.Add(new JobData("Time_1000ColorRGBAs"));
+            
+            JobManager.Jobs.Add(new Time_1000Vector2s());
+            JobManager.JobData.Add(new JobData("Time_1000Vector2s"));
+            
+            JobManager.Jobs.Add(new Time_1000Points());
+            JobManager.JobData.Add(new JobData("Time_1000Points"));
+
+
+
+            //add alot more jobs and testing ideas here
+            JobManager.Jobs.Add(new Time_Vector2bStruct());
+            JobManager.JobData.Add(new JobData("Time_Vector2bStruct"));
+
+            JobManager.Jobs.Add(new Time_Vector2Struct());
+            JobManager.JobData.Add(new JobData("Time_Vector2Struct"));
+
+            JobManager.Jobs.Add(new Time_IndexLoop());
+            JobManager.JobData.Add(new JobData("Time_IndexLoop"));
+
+            JobManager.Jobs.Add(new Time_ForEachLoop());
+            JobManager.JobData.Add(new JobData("Time_ForEachLoop"));
+        }
+
+        #endregion
+
+
+        #region Update and Process Jobs
+
+        static byte activeJobs = 0;
+        static int jobCounter = 0;
+        protected override void Update(GameTime gameTime)
+        {
+            stopWatch.Reset();
+            stopWatch.Start();
+            base.Update(gameTime);
+            //baseline (no forloop) = 5 ticks
+            if (frameCount > 10) //ignore the first 10 frames
+            {
+                activeJobs = 0; //reset the job counters
+                jobCounter = 0;
+                for (i = 0; i < JobManager.Jobs.Count; i++)
+                {
+                    if (activeJobs < jobsPerFrame)
+                    {   //the index i represents a job and it's data by associating two lists
+                        if (JobManager.JobData[i].Completions < totalCompletes)
+                        {
+                            JobManager.JobData[i].TotalFrames++; //count as frame of work
+                            StartJob(JobManager.Jobs[i], i); //kick off the threads
+                            activeJobs++; //count this as an active job
+                        }
+                        else if (JobManager.JobData[i].Completions > totalCompletes)
+                        {   //average and trim the completions
+                            JobManager.JobData[i].Average = (short)
+                                (JobManager.JobData[i].TotalTicks / JobManager.JobData[i].Completions);
+                            JobManager.JobData[i].Completions = totalCompletes;
+                        }
+                        else { jobCounter++; } //job complete
+                    }
+                    if (jobCounter >= JobManager.Jobs.Count)
+                    {   //handle case when all jobs are complete
+                        total.Stop(); //stop the timer
+                    }
+                }
+            }
+        }
+
+        #endregion
+        
+
+        #region Draw JobData
+
+        protected override void Draw(GameTime gameTime)
+        {
+            stopWatch.Stop();
+            timespan = stopWatch.Elapsed;
+            frameCount++;
+            if (frameCount > 10) //discard the first 10 frames
+            {
+                totalTicks += timespan.Ticks;
+                averageTicks = totalTicks / (frameCount - 10);
+            }
+
+            //baseline avg 5 from 10,000 frames
+            output.Append("ticks this frame: " + timespan.Ticks);
+            output.Append("\navg ticks per frame: " + averageTicks);
+            output.Append("\ntotal frames: " + frameCount);
+            output.Append("\n");
+            output.Append("\ntotal jobs: " + JobManager.JobData.Count);
+            output.Append("\njob per frame: " + jobsPerFrame);
+            output.Append("\nthreads per job: " + threadsPerJob);
+            output.Append("\ncompletions required per job: " + totalCompletes);
+            output.Append("\n");
+            output.Append("\ntotal tests to run: " + totalCompletes * JobManager.JobData.Count);
+            output.Append("\ntotal time tests ran: " + total.Elapsed.ToString(@"hh\:mm\:ss"));
+            output.Append("\n");
+
+            //append job values
+            for (i = 0; i < JobManager.JobData.Count; i++)
+            { PrintJob(JobManager.JobData[i], i); }
+            //dump string builder to text string
+            text = output.ToString();
+            output.Clear();
+
+            //draw
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            spriteBatch.Begin();
+            spriteBatch.DrawString(
+                BitmapFont,
+                text,
+                position,
+                color,
+                rotation,
+                origin,
+                scale,
+                spriteEffect,
+                zDepth);
+            spriteBatch.End();
+            base.Draw(gameTime);
+        }
+
+        #endregion
+
+    }
+}
