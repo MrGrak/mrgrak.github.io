@@ -11,7 +11,50 @@
 <h1>Mutable Multithreading</h1>
 
 <p>
-Coming soon.
+This is a big topic, with lots to explore, so I created a public repo to do just that.<br>
+Here is that public repo: <a target="_blank" href="https://github.com/MrGrak/Gameloops">https://github.com/MrGrak/Gameloops</a><br>
+<br>
+In this repo, I expore writing mutable gameloops in a different multithreaded way.<br>
+The 'game' is essentially this: actors move towards a target, and die if they overlap.<br>
+The game is over when there are 1 or less actors remaining.<br>
+<br>
+<b>A brief Summary</b><br>
+<br>
+I model actors as X, Y, and active booleans, using Lists.<br>
+Actors move towards a goal position each frame, then check their collisions with other actors.<br>
+If two actors collide, the checking actor becomes inactive, and is removed from the game.<br>
+There are Pool and Simulation classes that manage the game.<br>
+<a target="_blank" href="https://github.com/MrGrak/Gameloops/blob/master/CsharpConsoleAppExamples/main%2B0.cs">Here is a single threaded version of that game, as a console application.</a><br>
+<br>
+<b>Multithreading The GameLoop</b><br>
+<br>
+The way I multithreaded this was to first locate where the most work was being done.<br>
+This was the collisions work, as it was checking each actor against every other actor.<br>
+For a pool size of 256, this was 256*256 operations, compared to the move operations at 256*1.<br>
+So I split the collision work in two, between two threads or main and 1 thread.<br>
+<br>
+This was done by breaking collision functionality between two functions.<br>
+Function1 works on 1st half of actors processing collisions.<br>
+Function2 works on 2nd half of actors processing collisions.<br>
+<a target="_blank" href="https://github.com/MrGrak/Gameloops/blob/master/MonogameUWPexamples/Game1_gameloop_jobsInteractive.cs">Here is the latest multi threaded version of that game, in Uwp using Monogame.</a><br>
+
+<br>
+<b>A Visual Example</b><br>
+<br>
+In the gif below, I show the systems working together, and the work ticks for single and multi threaded versions.<br>
+The goal position can be changed with left clicks, which causes the actors to change moving direction.<br>
+This sim is also interactive, and actors can be added with right clicks.<br>
+<br>
+<img src="../Assets/mutableMultiGame_Uwp06.gif">
+<br>
+<br>
+In order to get extremely accurate work ticks, I use a while(true) loop on a thread.<br>
+This 'monitor' object constantly checks a handful of global booleans to see when work starts and completes.<br>
+This allows me to verify that the work being done in parallel on threads is actually faster than single threaded version.<br>
+This 'monitor' object would only be used while the game was in 'debug' mode, as it eats 25% cpu on it's own.<br>
+
+
+
 </p>
 
 <br><br><br>
