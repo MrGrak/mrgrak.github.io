@@ -14,12 +14,29 @@
 <p>
 In this article, a mutable gameloop is presented as a C# console application.<br>
 We discuss how the application runs and handles global mutable program state.<br>
+First, let's look at two examples of mutable game design to prove it's possible.<br>
 <br>
+
+
+<h3>Mutable Game Design Examples</h3>
+<br>
+<img src="../Assets/smwwV1.gif"><br>
+<br>
+public repo: <a target="_blank" href="https://github.com/MrGrak/SMWW">https://github.com/MrGrak/SMWW</a><br>
+<br>
+<img src="../Assets/TSK_077release.gif">
+<br>
+public repo: <a target="_blank" href="https://github.com/MrGrak/TSK">https://github.com/MrGrak/TSK</a><br>
+<br>
+
 
 
 
 <h3>Console Gameloop Example 1</h3>
 
+Now, let's discuss a simple, but important gameloop example.<br>
+This gameloop is at the heart of both the examples presented above.<br>
+<br>
 First, the code for the gameloop is presented.<br>
 Then, the code is modified to be timed and tested.<br>
 <br>
@@ -70,9 +87,21 @@ In <b>ConsoleGameloop1Timed</b>, we average how long Simulation.Run() takes to r
 many times. We output these values to the console, along with the averages.<br>
 <br>
 Below is the console output of ConsoleGameloop1Timed:<br>
-
+<br>
 <br>
 <img src="../Assets/consoleGameloop1TimedResults.png" ><br>
+<br>
+<br>
+<h3>Why is this Gameloop Example Important?</h3>
+
+It demonstrates pools, and adding and removing pool objects (quickly and easily).<br>
+It demonstrates a basic move phase, where each pool object's positions are calculated.<br>
+It demonstrates a basic collision phase, where active object's positions are compared<br>
+to all other active objects. It shows that the gameloop is deterministic, and efficient.<br>
+In other words, this gameloop serves as a simple, but 'correct' example of how to do<br>
+a mutable gameloop on a single thread. In the next article, it will be multithreaded.<br>
+<br>
+<br>
 <br>
 
 </p>
