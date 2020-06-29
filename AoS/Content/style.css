@@ -1,0 +1,125 @@
+<style>
+.container {
+    position: relative;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+
+
+
+a.home-link, a:hover.home-link {
+   text-decoration: none;
+}
+
+
+.title{
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 80000;
+	width: 100%;
+	height: 100px;
+	margin-top: 0px;
+	margin-left: 0px;
+	background: rgba(240, 240, 240, 1.0);
+	border-bottom: 1px solid #e5e5e5;
+	overflow: hidden;
+}
+.titleStyle  {
+	font-family: Arial, sans-serif;
+	font-size: 30px;
+	color: #000000;
+	margin-top: 32px;
+	margin-left: 30px;
+	font-weight: normal;
+	text-align: left;
+}
+
+
+
+div.wrapper {
+    position: relative;
+	height: 100%;
+}
+div.menu {
+	position: absolute;
+	top: 100px;
+    z-index: 1;
+    width: 300px;
+	box-sizing: border-box;
+}
+div.display {
+    position: absolute;
+    top: 100px;
+	left: 300px;
+	z-index: 1;
+    width: 600px;
+	width: calc(100vw - 310px);
+    padding-left: 15px;
+    box-sizing: border-box;
+}
+iframe {
+    width: 100%;
+    height: calc(100vh - 115px);
+	border: 0 none;
+}
+
+
+
+
+
+
+
+body, html  {
+	background-color: rgba(240, 240, 240, 1.0);
+	color: #393939;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size:14px;
+}
+.sectionTitle{
+	font-size: 20px;
+	margin-top: 10px;
+	margin-bottom: 0px;
+	font-weight: bold;
+}
+.subSection{
+	font-size: 16px;
+	margin-top: 4px;
+	margin-bottom: 0px;
+	font-weight: bold;
+}
+a:link { text-decoration: none; color: #e73c00; }
+a:visited { text-decoration: none; color: #ADA8A5; }
+a:hover { text-decoration: none; color: #555453; }
+a:active { text-decoration: none; color: #ADA8A5; }
+a {line-height: 1.6em;}
+article {
+    margin-left: 0px;
+    border-left: 0px solid gray;
+    padding: 1em;
+    overflow: hidden;
+}
+h1  {font-size:32px;}
+h2  {font-size:28px;}
+h3  {font-size:20px;}
+p,li{line-height: 1.4em;}
+textarea {
+	border: dashed 1px gray;
+	background: #eeeeee;
+	color: #333333;
+    resize: none;
+	padding:15px;
+	width: calc(100vw - 130px);
+	text-align: left;
+	direction: ltr;
+}	
+textarea.tiny { height: 30px; }
+textarea.small { height: 80px; }
+textarea.medium { height: 200px; }
+textarea.big { height: 500px; }
+textarea.epic { height: 1000px; }
+
+</style>

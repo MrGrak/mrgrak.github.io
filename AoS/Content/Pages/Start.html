@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<title>Getting Started AoS</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+<article>
+
+
+
+
+<h1>Overview</h1>
+
+<h3>This guide was created to help you get started with writing game code using Arrays of Structures.</h3>
+
+<p>
+This guide is my thoughts and personal exploration of writing game code in an AoS style. <br>
+This is all just my opinion, I'm not an authority on how you should write code. Do what you want to.<br>
+<br>
+AoS stands for 'Array of Structures' and is very similar to using a List of Classes, except that AoS is faster to iterate. It's very common to use a list of classes as a pool for particles, as an example. With some simple modifications, that pool of classes can become an array of structs, which is faster, so you can have more particles, as an example.<br>
+<br>
+In C#, classes are not allocated contiguously in a list or array, but structs in arrays are. And when mutating class instances on a list/array, we must use the heap for every read and write. It would be better to use the stack to do work, and rely less on heaped data. So, let's work towards that goal. Here are some axioms to guide us:<br>
+<br>
+1. It's faster to use the stack (than heap). <br>
+2. But we need to store that data outside of the stack frame (so it has to be heaped).<br>
+3. We should minimize heap reads and writes, they are slow. <br>
+4. More stack based work puts less pressure on the garbage collector, since we aren't creating garbage classes for it to clean up later on. Less pressure on the GC means we don't get GC stutters and our games run smoothly.<br>
+5. (more to come later)
+<br>
+<br>
+Now let me show you a working implementation of AoS...
+<br>
+</p>
+
+<h3>This is how I have implemented AoS in my current game, Lazr:</h3>
+
+<p>
+All level objects, characters, particles, and projectiles are structs in arrays.<br>
+The "T" value on the top right is the "ticks per frame for update and draw loops".<br>
+There's 10,000 ticks in a millisecond, and 60 fps games run at 16.6ms per frame.<br>
+Most of the time, Lazr is below 1-2 ms per frame. So, AoS works. It works really well.<br>
+The GPU is not used to do any physics work, for anything. This is all CPU side.<br>
+</p>
+
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/_P-Ja60P40Q" frameborder="0" allowfullscreen></iframe>
+<br><br><br><br>
+
+
+<h3>I am going to explain the exact AoS design I used in the above example</h3>
+<p>
+That's kinda the point of these articles, actually. I want other game developers to see just how easy it can be to use AoS, and hopefully remove some complexity from their codebases. Less complexity means you can iterate quicker, extend it easier too. Simple code is by definition, simpler to work with. So, a primary goal of mine when explaining and presenting code to you will be: simplicity.<br>
+<br>
+"But... there's a faster way..."<br>
+<br>
+There is almost always a faster way. The choice that you make as a game developer is "how much complexity/abstraction do I need to embrace in order to get the results I want for the game?" - and this is a personal choice based on many factors. It's up to you too choose if you use AoS, or SoA, or AoSoA, or Ecs, etc... I chose AoS because it fit my game's needs, and now I'd simply like to share my findings with you. I'm not saying AoS is "the best and only way to program games", this set of articles is actually titled "Getting Started with AoS". I hope I have made my intentions clear here.<br>
+</p>
+<br><br><br>
+
+
+<h3>Guide Conventions</h3>
+<p>
+To the left is the navigation for this guide. <br>
+Clicking an orange link will load the corresponding tutorial in this right handed area.<br>
+Images and screenshots will often be embedded into tutorials, along with links to assets that you may need to complete the tutorial.<br>
+Assets can be downloaded from links, or you can find all the assets in the /Assets folder of this guide, if you downloaded the guide. <br>
+All tutorials will be using <b>Visual Studio</b>, but you can use any IDE with Monogame support.<br><br>
+Sometimes code will be displayed in a tutorial. It looks like this:<br>
+</p>
+
+<textarea rows="3" readonly>
+This is some C# source code.
+</textarea>
+
+<p>
+You are encouraged to copy and paste this code into your project, then modify it to suit your needs.<br>
+That's about it for guide conventions, feel free to start with any article you like.
+</p>
+
+
+
+
+<br><br><br>
+<br><br><br>
+<br><br><br>
+</article>
+</body>
+</html>
