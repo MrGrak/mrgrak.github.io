@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<title>Getting Started AoS</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+<article>
+
+
+
+
+<h1>The Data</h1>
+
+<h3>An explanation of the classes and structs</h3>
+
+<p>
+
+Here is a quick overview of the classes this system uses:<br>
+<br>
+The Data Class - simply holds references for systems to use when they need to.<br>
+The Physics Struct - contains floats describing positions and accelerations.<br>
+The Particle ID Enumerator - an easy to read way of handling IDs for particles.<br>
+The Particle Struct - describes a particle that has movement and color.<br>
+The Particle System Class - creates, updates, and draws particle structs.<br>
+The Game1 Class - your friendly neighborhood xna game class.<br>
+<br>
+Now, we'll go over each on in detail.<br>
+<br>
+<br>
+<br>
+
+
+</p>
+
+
+
+
+<h3>public static class Data</h3><br>
+<textarea rows="10" readonly>
+public static class Data
+{
+	public static GraphicsDeviceManager GDM;
+	public static ContentManager CM;
+	public static SpriteBatch SB;
+	public static Game1 GAME;
+}
+</textarea>
+
+<p>This is a public static class (kinda like a singleton) that holds pointers<br>
+to objects that the game's various system will need access to.<br>
+You could instead pass these references into object constructors, but I<br>
+choose to keep them in a class that is accessible from anywhere in the<br>
+namespace. This design makes it easy to use these common objects.<br>
+</p>
+<br>
+<br>
+<br>
+
+
+
+
+
+
+
+<h3>public struct Physics</h3><br>
+<textarea rows="10" readonly>
+public struct Physics
+{
+	public float X, Y; //current position
+	public float accX, accY; //accelerations
+	public float preX, preY; //last position
+}
+</textarea>
+
+<p>This is a public struct contains floats for the x and y positions,<br>
+along with the previous frame's x and y positions. There are also floats<br>
+for the x and y accelerations. Later, we'll write a simple physics system<br>
+that will move particles around with velocity and acceleration.<br>
+<br>
+Note that the Physics struct will is used like a component, in composing<br>
+the Particle Struct.<br> 
+</p>
+<br>
+<br>
+<br>
+
+
+
+
+
+
+
+<h3>public enum ParticleID</h3><br>
+<textarea rows="5" readonly>
+public enum ParticleID : byte { Inactive, Fire, Rain }
+</textarea>
+
+<p>This is a public enumerator, so it essentially maps a String to an<br>
+underlying type, like a byte. When compiled, the Strings are replaced<br>
+with the underlying type value. So in the example above, Inactive = 0.<br>
+Fire = 1, Rain = 2. Being able to replace these number values with<br>
+strings makes later code easier and clearer to read.<br>
+For the example, I've only defined 3 possible particle IDs, or states.<br>
+You can add more here and make your own type of particles.<br>
+</p>
+<br>
+<br>
+<br>
+
+
+
+
+
+
+
+
+
+
+<h3>public struct Particle</h3><br>
+<textarea rows="10" readonly>
+public struct Particle
+{   //uses physics struct as component
+	public Physics physics;
+	public Color color;
+	public float alpha;
+	public ParticleID Id;
+	public short age;
+}
+</textarea>
+
+<p>
+This is a public Particle struct, which contains a physics struct<br>
+acting like a component. We could, for example, have a Projectile<br>
+struct that is very similar to this Particle struct, which could<br>
+also have a Physics struct. So, you can move shared fields to smaller<br>
+structs, and treat them like components to compose other structs.<br>
+<br>
+The other fields contained in the Particle struct are used in the<br>
+particle simulation. We have color and alpha so we can display particles<br>
+with different ids as different colors. The ParticleID field is the<br>
+enumerator from above, which will make particles easy to identify later.<br>
+<br>
+Finally, we have the particle's age, which can be any value you want,<br>
+but I've never found the need to have a particle live longer than the<br>
+max size of a short, so I use a short here. Each frame, this age value<br>
+will get incremented, and once it exceeds a specific threshold, the<br>
+particle's ID will be changed to Inactive. If a particle is inactive,<br>
+it is not updated or drawn, effectively 'removing' it from the simulation.<br>
+<br>
+Now it's time to talk about the Particle System itself, which I've broken<br>
+up into separate articles.<br>
+<br>
+
+
+
+<br><br><br>
+<br><br><br>
+<br><br><br>
+</article>
+</body>
+</html>

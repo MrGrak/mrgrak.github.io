@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<title>Getting Started AoS</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+<article>
+
+
+
+
+<h1>The Particle System</h1>
+
+<h3>Where the work gets done</h3>
+
+<p>
+The Particle System class is a Pool written over an Array of Structs.<br>
+It has 4 methods, each explained below:<br>
+<br>
+<b>Reset()</b> - sets all particle structs to Inactive.<br>
+<b>Spawn()</b> - spawns a particle at X, Y position, with acceleration.<br>
+<b>Update()</b> - applies physics, manages particle states, culls, and spawns particles.<br>
+<b>Draw()</b> - draws active particles.<br>
+<br>
+Here is the Game loop, which provides some context to the Particle System:<br>
+Game1's constructor is called from Program Main, which sets up most of the<br>
+common object references, like the reference to the game itself stored in Data.<br>
+Then Game1.LoadContent() is called, where the SpriteBatch reference is set,<br>
+and we first see Particle System's Reset() method.<br>
+<br>
+</p>
+
+
+
+<br><br><br>
+<br><br><br>
+<br><br><br>
+</article>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<title>Getting Started AoS</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+<article>
+
+
+
+
+<h1>Game1.cs</h1>
+
+<textarea rows="50" readonly>
+public class Game1 : Game
+{
+	public static Stopwatch timer = new Stopwatch();
+	public static long ticks = 0;
+
+	public Game1()
+	{
+		//set data game refs
+		Data.GDM = new GraphicsDeviceManager(this);
+		Data.GDM.GraphicsProfile = GraphicsProfile.HiDef;
+		Data.CM = Content;
+		Data.GAME = this;
+		Content.RootDirectory = "Content";
+		IsMouseVisible = true;
+	}
+
+	protected override void Initialize() { base.Initialize(); }
+
+	protected override void LoadContent()
+	{
+		Data.SB = new SpriteBatch(GraphicsDevice);
+		ParticleSystem.Reset(); //acts as constructor
+	}
+
+	protected override void UnloadContent() { } //lol
+
+	protected override void Update(GameTime gameTime)
+	{
+		timer.Restart();
+		base.Update(gameTime);
+		ParticleSystem.Update();
+	}
+
+	protected override void Draw(GameTime gameTime)
+	{
+		GraphicsDevice.Clear(Color.CornflowerBlue);
+		base.Draw(gameTime);
+		ParticleSystem.Draw();
+		timer.Stop();
+		ticks = timer.ElapsedTicks;
+		Data.GAME.Window.Title = "AoS Particle System Example by @_mrgrak"
+			+ "- ticks per frame:" + ticks +
+			" - total particles: " + ParticleSystem.active +
+			"/" + ParticleSystem.size;
+	}
+}
+</textarea>
+
+<p>
+First, we set references in Game's constructor.<br>
+Then we set the SpriteBatch reference in Game's LoadContent method.<br>
+We also Reset() the Particle System, which creates it's texture too.<br>
+Then we settle into the expected Update(), Draw() pattern.<br>
+<br>
+At the end of Draw(), we collect the elapsed ticks for this frame, and<br>
+write that time, along with a count of the active particles, to the<br>
+window's title. This is a primitive, but effective way, to display<br>
+timing information without having to load a font to draw.<br>
+<br>
+Now let's talk about why this design is fast.<br>
+</p>
+<br>
+
+
+
+<br><br><br>
+<br><br><br>
+<br><br><br>
+</article>
+</body>
+</html>

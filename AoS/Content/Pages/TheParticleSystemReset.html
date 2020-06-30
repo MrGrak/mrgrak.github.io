@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<title>Getting Started AoS</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+<article>
+
+
+
+
+<h1>Reset()</h1>
+
+<h3>public static void Reset()</h3>
+<textarea rows="15" readonly>
+public static void Reset()
+{   //acts as a constructor as well
+	if (texture == null)
+	{   //set up a general texture we can draw dots with, if required
+		texture = new Texture2D(Data.GDM.GraphicsDevice, 1, 1);
+		texture.SetData<Color>(new Color[] { Color.White });
+	}
+	//reset particles to inactive state
+	for (int i = 0; i < size; i++)
+	{ data[i].Id = ParticleID.Inactive; }
+	active = 0; //reset active count too
+}
+</textarea>
+
+
+<p>
+<b>The Reset() method</b> readies the Particle System for use, which involves creating<br>
+a texture to use when we later draw these particles. This texture is created, and<br>
+then all particles are looped and set to inactive. We also set the active count<br>
+to 0, which is a value that we will use to count how many particles are active.<br>
+<br>
+After Game1.LoadContent() completes, the game settles into the pattern of<br>
+Update(), Draw() being called every 16.6ms. Game passes these Update and Draw<br>
+calls onto the Particle System, so let's look at the big Update method now.<br>
+We will look at the Spawn() method in it's own article.<br>
+</p>
+
+<br>
+<br>
+
+
+
+
+
+
+<br><br><br>
+<br><br><br>
+<br><br><br>
+</article>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<title>Getting Started AoS</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+<article>
+
+
+
+
+<h1>Draw()</h1>
+
+<textarea rows="29" readonly>
+public static void Draw()
+{   //open spritebatch and draw active particles
+	Data.SB.Begin(SpriteSortMode.Deferred,
+		BlendState.AlphaBlend, SamplerState.PointClamp);
+
+	int s = size;
+	for (int i = 0; i < s; i++)
+	{   //if particle is active, draw it
+		if (data[i].Id > 0)
+		{   //create vector2 that draw wants
+			Vector2 pos = new Vector2(data[i].physics.X, data[i].physics.Y);
+			//draw each particle as a sprite
+			Data.SB.Draw(texture,
+				pos,
+				drawRec,
+				data[i].color * data[i].alpha,
+				0,
+				Vector2.Zero,
+				1.0f, //scale
+				SpriteEffects.None,
+				i * 0.00001f);
+		}   //layer particles based on index, as simple example
+	}
+
+	Data.SB.End();
+}
+</textarea>
+
+<p>
+This Draw method opens up SpriteBatch, and starts checking the Particle Array<br>
+for active Ids, just like Update() does. When an active Id is found, we copy<br>
+the particles position into a Vector2 and pass that into Monogame's SpriteBatch,<br>
+along with the particle's color + alpha. We use the texture created before to draw<br>
+all the particles with, so all these particles are submitted in one draw call.<br>
+<br>
+Now let's look at the last method, Spawn, in the next article.
+</p>
+<br>
+
+
+
+<br><br><br>
+<br><br><br>
+<br><br><br>
+</article>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<title>Getting Started AoS</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+<article>
+
+
+
+
+<h1>Spawn()</h1>
+
+<textarea rows="50" readonly>
+public static void Spawn(
+	ParticleID ID,          //type of particle to spawn
+	float X, float Y,       //spawn x, y position 
+	float accX, float accY  //initial x, y acceleration
+	)
+{   
+	//create a stack instance to work on
+	Particle P = new Particle();
+	
+	//setup P based on parameters
+	P.physics.X = X; P.physics.preX = X;
+	P.physics.Y = Y; P.physics.preY = Y;
+	P.physics.accX = accX;
+	P.physics.accY = accY;
+	
+	//set defaults for particle
+	P.alpha = 1.0f;
+	P.age = 0;
+	P.color = Color.White;
+	
+	//pass the ID
+	P.Id = ID;
+	//setup particle based on ID
+	if (P.Id == ParticleID.Fire)
+	{   //fire is red, for instance
+		P.color = Color.Red;
+	}
+	else if (P.Id == ParticleID.Rain)
+	{   //rain is blue, this could be an animated sprite tho
+		P.color = Color.Blue;
+	}
+
+	//find an inactive particle to copy data to
+	int s = size;
+	for (int i = 0; i < s; i++)
+	{   //read each struct once
+		if (data[i].Id == ParticleID.Inactive)
+		{   //write local to heap once
+			data[i] = P;
+			active++;
+			return;
+		}   //if all are active, 
+	}       //fail silently/ignore
+}
+</textarea>
+
+<p>
+The design of the Spawn method is simple: create a Particle struct and modify it<br>
+to meet the passed parameters, then loop over the Particle Array and find an inactive<br>
+struct to save that data to.<br>
+<br>
+Now let's look at the main Game1 class.<br>
+</p>
+<br>
+
+
+
+<br><br><br>
+<br><br><br>
+<br><br><br>
+</article>
+</body>
+</html>

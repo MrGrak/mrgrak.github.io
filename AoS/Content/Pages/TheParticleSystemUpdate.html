@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<title>Getting Started AoS</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+<article>
+
+
+
+
+<h1>Update()</h1>
+
+<h3>public static void Update()</h3><br>
+<textarea rows="20" readonly>
+public static void Update()
+{   //step 1 - update/animate all the particles
+	//step 2 - randomly spawn fire and rain particles
+
+	//increase wind counter
+	windCounter += 0.015f;
+	//get left or right horizontal value for wind
+	float wind = (float)Math.Sin(windCounter) * 0.03f;
+
+	//store locals for this heap data
+	int width = Data.GDM.PreferredBackBufferWidth;
+	int height = Data.GDM.PreferredBackBufferHeight;
+
+	//step 1 - update all active particles
+	int s = size;
+	for (int i = 0; i < s; i++)
+	{   //particle active, age + check id / behavior
+		if (data[i].Id > 0)
+		{   //create a local copy
+			Particle P = data[i];
+
+			//age active particles
+			P.age++;
+			//affect particles based on id
+			if (P.Id == ParticleID.Fire)
+			{   //fire rises, gravity does not affect it
+				P.physics.accY -= gravity;
+				P.physics.accY -= 0.05f;
+				//has longer life than rain
+				if (P.age > 300)
+				{ P.Id = ParticleID.Inactive; }
+			}
+			else if (P.Id == ParticleID.Rain)
+			{   //rain falls (at different speeds)
+				P.physics.accY = Rand.Next(0, 100) * 0.001f;
+				//has shorter life than fire
+				if (P.age > 200)
+				{ P.Id = ParticleID.Inactive; }
+				//use behavior field here for additional states
+			}
+
+			//add gravity to push down
+			P.physics.accY += gravity;
+			//add wind to push left/right
+			P.physics.accX += wind;
+
+			//calculate velocity using current and previous pos
+			float velocityX = P.physics.X - P.physics.preX;
+			float velocityY = P.physics.Y - P.physics.preY;
+
+			//store previous positions (the current positions)
+			P.physics.preX = P.physics.X;
+			P.physics.preY = P.physics.Y;
+
+			//set next positions using current + velocity + acceleration
+			P.physics.X = P.physics.X + velocityX + P.physics.accX;
+			P.physics.Y = P.physics.Y + velocityY + P.physics.accY;
+
+			//clear accelerations
+			P.physics.accX = 0; P.physics.accY = 0;
+
+			//cull particle if it goes off screen
+			if (P.physics.X < 0 || P.physics.X > width)
+			{ P.Id = ParticleID.Inactive; }
+			else if (P.physics.Y < 0 || P.physics.Y > height)
+			{ P.Id = ParticleID.Inactive; }
+
+			//decrement active value upon particle expiration
+			if (P.Id == ParticleID.Inactive) { active--; }
+
+			//write local to heap
+			data[i] = P;
+		}
+	}
+
+	for (int i = 0; i < 100; i++)
+	{   //step 2 - randomly spawn rain + fire
+		Spawn(ParticleID.Rain,
+			Rand.Next(0, width),
+			0, 0, 0);
+		Spawn(ParticleID.Fire,
+			Rand.Next(0, width),
+			height - 0, 0, 0);
+	}
+}
+</textarea>
+
+<p>
+The overall goals of the Update() method are described as step 1 and step 2.<br>
+First, we'll animate, move, and age the particles. <br>
+Then we'll randomly spawn fire and rain particles, so there's particles for <br>
+step 1 to actually work with.<br>
+<br>
+Let's look at each section in detail, starting with wind.<br>
+</p>
+<br>
+
+
+
+
+
+<textarea rows="7" readonly>
+//increase wind counter
+windCounter += 0.015f;
+//get left or right horizontal value for wind
+float wind = (float)Math.Sin(windCounter) * 0.03f;
+</textarea>
+
+<p>
+WindCounter is a value used to animate particles left and right. We apply<br>
+a Sin() to this value (which is incremented slowly), and we get back a<br>
+value that oscillates back and forth between negative and positive. We<br>
+will apply this final value as an acceleration to the particles later.<br>
+</p>
+<br>
+
+
+
+
+
+
+
+
+
+
+<textarea rows="6" readonly>
+//store locals for this heap data
+int width = Data.GDM.PreferredBackBufferWidth;
+int height = Data.GDM.PreferredBackBufferHeight;
+</textarea>
+
+<p>
+We're going to be heap reading this value each time, for each particle, unless<br>
+we store that value on the stack. So here we copy the values for the game's<br>
+width and height to ints within the scope of the Update() method.<br>
+Now we begin looping the array of particle structs.<br>
+</p>
+<br>
+
+
+
+
+
+
+
+
+<textarea rows="10" readonly>
+//step 1 - update all active particles
+int s = size;
+for (int i = 0; i < s; i++)
+{   //particle active, age + check id / behavior
+	if (data[i].Id > 0)
+	{   //create a local copy
+		Particle P = data[i];
+		
+</textarea>
+
+<p>
+We store the size on the stack, and start checking particle structs to find<br>
+active ones. A particle is 'active' if it's Id does not equal the Inactive<br>
+value of 0. So, if the enum value is greater than 0, this particle must be<br>
+a Fire or Rain particle. It may be a value higher than a Fire or Rain particle<br>
+as well, but we don't handle that case in this example. Once we have located<br>
+an active particle, we create a local particle struct that is a copy of the<br>
+active particle. Once we have a local copy ready, we can begin work on it.<br>
+<br>
+Let's start by aging the particle, so particles will expire and become inactive<br>
+after a certain time.<br>
+</p>
+<br>
+
+
+
+
+
+
+
+<textarea rows="22" readonly>
+//age active particles
+P.age++;
+
+//affect particles based on id
+if (P.Id == ParticleID.Fire)
+{   //fire rises, gravity does not affect it
+	P.physics.accY -= gravity;
+	P.physics.accY -= 0.05f;
+	//has longer life than rain
+	if (P.age > 300)
+	{ P.Id = ParticleID.Inactive; }
+}
+else if (P.Id == ParticleID.Rain)
+{   //rain falls (at different speeds)
+	P.physics.accY = Rand.Next(0, 100) * 0.001f;
+	//has shorter life than fire
+	if (P.age > 200)
+	{ P.Id = ParticleID.Inactive; }
+}
+</textarea>
+
+<p>
+We increase the particle's age first. Then we check the particle Id,<br>
+and based on the Id we Update the particle differently. Fire, for example,<br>
+gets a negative acceleration of the gravity value, which will negate the<br>
+gravity that we will apply later to all particles. We could instead choose<br>
+to only apply gravity to the Rain particle, but this works too. Then we<br>
+apply some lift to the fire particle, so it will rise off the ground and<br>
+move up. Moving Up on the Y axis is negative, and moving down is positive.<br>
+<br>
+Then we check the particles age, and based on age and Id, we expire the particle,<br>
+which simply sets it's Id to inactive. We repeat this same process for Rain,<br>
+but with Rain we apply additional downwards acceleration, so Rain falls down a<br>
+bit faster than gravity would normally pull it.<br>
+<br>
+Now let's apply some additional forces like gravity and wind, and move the particles.<br>
+</p>
+<br>
+
+
+
+
+
+
+
+
+<textarea rows="22" readonly>
+//add gravity to push down
+P.physics.accY += gravity;
+//add wind to push left/right
+P.physics.accX += wind;
+
+//calculate velocity using current and previous pos
+float velocityX = P.physics.X - P.physics.preX;
+float velocityY = P.physics.Y - P.physics.preY;
+
+//store previous positions (the current positions)
+P.physics.preX = P.physics.X;
+P.physics.preY = P.physics.Y;
+
+//set next positions using current + velocity + acceleration
+P.physics.X = P.physics.X + velocityX + P.physics.accX;
+P.physics.Y = P.physics.Y + velocityY + P.physics.accY;
+
+//clear accelerations
+P.physics.accX = 0; P.physics.accY = 0;
+</textarea>
+
+<p>
+How this physics system works is: we calculate the difference between the<br>
+last and current positions to get a velocity. Then we add the velocity to<br>
+the current positions, along with this frame's accelerations. Then we clear<br>
+the accelerations. This design makes it easy to 'push' particles around, as<br>
+we only need to modify their acceleration values. For example, we apply a<br>
+gravitational value to the Y acceleration of every particle, each frame.<br>
+This has the net effect of pulling all particles downwards. We also apply<br>
+a wind value to each particle's X axis accelerations each frame, which has<br>
+the net effect of pushing and pulling particles left and right over time.<br>
+This is a fast, simple, and easy to work with physics system that can be<br>
+extended to probably meet your needs. Add collisions, as an excersize.<br>
+<br>
+Now let's cull particles and keep track of them.<br>
+</p>
+<br>
+
+
+
+
+
+
+<textarea rows="13" readonly>
+//cull particle if it goes off screen
+if (P.physics.X < 0 || P.physics.X > width)
+{ P.Id = ParticleID.Inactive; }
+else if (P.physics.Y < 0 || P.physics.Y > height)
+{ P.Id = ParticleID.Inactive; }
+
+//decrement active value upon particle expiration
+if (P.Id == ParticleID.Inactive) { active--; }
+
+//write local to heap
+data[i] = P;
+</textarea>
+
+<p>
+We check to see if a particle has exceed the bounds of the game window, and if<br>
+it has we simply set it's Id to be inactive. This applies for both X and Y axis.<br>
+At the very end of the method, we check the Particle Id and see if it's Inactive.<br>
+If this is true, an active particle has expired and become inactive, so we decrement<br>
+the active count by one. Finally, we write our local particle struct to the actual<br>
+particle array, saving our work to the heap.<br>
+<br>
+That concludes Step 1 of the Particle System. Now here's Step 2, it's much smaller.
+<br>
+</p>
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+<textarea rows="11" readonly>
+for (int i = 0; i < 100; i++)
+{   //step 2 - randomly spawn rain + fire
+	Spawn(ParticleID.Rain,
+		Rand.Next(0, width),
+		0, 0, 0);
+	Spawn(ParticleID.Fire,
+		Rand.Next(0, width),
+		height, 0, 0);
+}
+</textarea>
+
+<p>
+100 times each frame, we randomly spawn a Rain and Fire particle along the top and<br>
+bottom edges of the game window. So, we are spawning 200 particles each frame, at<br>
+60 fps. In one second, we will spawn 200 * 60 = 12,000 particles. Our particle system<br>
+is setup to handle 30,000 particles. We also need to keep in mind that the particles<br>
+will be moving, and they will become inactive if they go off screen.<br>
+<br>
+Finally, let's take a look at the Draw() Method.<br>
+<br>
+</p>
+
+
+
+
+
+
+<br><br><br>
+<br><br><br>
+<br><br><br>
+</article>
+</body>
+</html>
